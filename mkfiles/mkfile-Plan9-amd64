@@ -12,7 +12,7 @@ AS=		6a
 ASFLAGS=
 
 CC=		6c
-CFLAGS=		-wFV -I$ROOT/Plan9/$OBJTYPE/include -I$ROOT/Plan9/include -I$ROOT/include
+CFLAGS=		-wFV -I$ROOT/Plan9/$OBJTYPE/include -I$ROOT/Plan9/include -I$ROOT/include -DNO_PTR_WRAPPING
 ANSICPP= -p
 
 LD=		6l

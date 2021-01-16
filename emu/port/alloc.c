@@ -721,9 +721,12 @@ realloc(void *v, size_t size)
 		print("realloc failed from %lux\n", getcallerpc(&v));
 	return nv;
 }
-
 void
+#ifdef NO_PTR_WRAPPING
+setmalloctag(void *v, uintptr pc)
+#else
 setmalloctag(void *v, ulong pc)
+#endif
 {
 	ulong *u;
 
@@ -735,7 +738,11 @@ setmalloctag(void *v, ulong pc)
 	u[-Npadlong+MallocOffset] = pc;
 }
 
+#ifdef NO_PTR_WRAPPING
+uintptr
+#else
 ulong
+#endif
 getmalloctag(void *v)
 {
 	USED(v);
@@ -745,7 +752,11 @@ getmalloctag(void *v)
 }
 
 void
+#ifdef NO_PTR_WRAPPING
+setrealloctag(void *v, uintptr pc)
+#else
 setrealloctag(void *v, ulong pc)
+#endif
 {
 	ulong *u;
 
@@ -757,7 +768,11 @@ setrealloctag(void *v, ulong pc)
 	u[-Npadlong+ReallocOffset] = pc;
 }
 
+#ifdef NO_PTR_WRAPPING
+uintptr
+#else
 ulong
+#endif
 getrealloctag(void *v)
 {
 	USED(v);

@@ -94,10 +94,17 @@ extern	void	free(void*);
 extern	ulong	msize(void*);
 extern	void*	calloc(ulong, ulong);
 extern	void*	realloc(void*, ulong);
+#ifdef NO_PTR_WRAPPING
+extern	void	setmalloctag(void*, uintptr);
+extern	void	setrealloctag(void*, uintptr);
+extern	uintptr	getmalloctag(void*);
+extern	uintptr	getrealloctag(void*);
+#else
 extern	void		setmalloctag(void*, ulong);
 extern	void		setrealloctag(void*, ulong);
 extern	ulong	getmalloctag(void*);
 extern	ulong	getrealloctag(void*);
+#endif
 extern	void*	malloctopoolblock(void*);
 
 /*

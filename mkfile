@@ -60,13 +60,16 @@ kernelnuke:V:	kernel/nuke-$HOSTMODEL
 nuke:V:		nuke-$HOSTMODEL
 
 cleandist:V: clean
+	echo ':::: cleandist'
 	rm -f $ROOT/$OBJDIR/lib/lib*.a
 
 nukedist:V: nuke
+	echo ':::: nukedist'
 	rm -f $ROOT/$OBJDIR/bin/*.exe
 	rm -f $ROOT/$OBJDIR/lib/lib*.a
 	
 &-Posix:QV:
+	echo ':::: ' $stem '-Posix'
 	for j in $DIRS utils tools
 	do
 		echo "(cd $j; mk $MKFLAGS $stem)"
@@ -74,6 +77,7 @@ nukedist:V: nuke
 	done
 
 &-Nt:QV:
+	echo ':::: ' $stem '-Nt'
 	for (j in $DIRS utils tools)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -81,6 +85,7 @@ nukedist:V: nuke
 	}
 
 &-Inferno:QV:
+	echo ':::: ' $stem '-Inferno'
 	for (j in $DIRS utils)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -88,6 +93,9 @@ nukedist:V: nuke
 	}
 
 &-Plan9:QV:
+	echo ':::: ' $stem '-Plan9'
+	echo ':::: DIRS=' $DIRS
+	echo ':::: MKFLAGS=' $MKFLAGS
 	for (j in $DIRS utils)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -95,6 +103,7 @@ nukedist:V: nuke
 	}
 
 emu/&-Posix:QV:
+	echo ':::: emu/' $stem '-Posix'
 	for j in $EMUDIRS
 	do
 		echo "(cd $j; mk $MKFLAGS $stem)"
@@ -102,6 +111,7 @@ emu/&-Posix:QV:
 	done
 
 emu/&-Nt:QV:
+	echo ':::: emu/' $stem '-Nt'
 	for (j in $EMUDIRS)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -109,6 +119,7 @@ emu/&-Nt:QV:
 	}
 
 emu/&-Plan9:QV:
+	echo ':::: emu/' $stem '-Plan9'
 	for (j in $EMUDIRS)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -116,6 +127,7 @@ emu/&-Plan9:QV:
 	}
 
 kernel/&-Posix:QV:
+	echo ':::: kernel/' $stem '-Posix'
 	for j in $KERNEL_DIRS
 	do
 		echo "(cd $j; mk $MKFLAGS $stem)"
@@ -123,6 +135,7 @@ kernel/&-Posix:QV:
 	done
 
 kernel/&-Nt:QV:
+	echo ':::: kernel/' $stem '-Nt'
 	for (j in $KERNEL_DIRS)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -130,6 +143,7 @@ kernel/&-Nt:QV:
 	}
 
 kernel/&-Inferno:QV:
+	echo ':::: kernel/' $stem '-Inferno'
 	for (j in $KERNEL_DIRS)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -137,6 +151,7 @@ kernel/&-Inferno:QV:
 	}
 
 kernel/&-Plan9:QV:
+	echo ':::: kernel/' $stem '-Plan9'
 	for (j in $KERNEL_DIRS)
 	{
 		echo '@{builtin cd' $j '; mk $MKFLAGS $stem}'
@@ -146,38 +161,49 @@ kernel/&-Plan9:QV:
 # Convenience targets
 
 Inferno-% inferno-% Inferno-386-% inferno-386-%:V:
+	echo ':::: convenience target Inferno 386 ' $stem 
 	mk 'SYSHOST=Inferno' 'OBJTYPE=386' $stem
 
 Inferno-arm-% inferno-arm-%:V:
+	echo ':::: convenience target Inferno arm ' $stem 
 	mk 'SYSHOST=Inferno' 'OBJTYPE=arm' $stem
 
 Plan9-% plan9-%:V:
+	echo ':::: convenience target Plan9 386 ' $stem 
 	mk 'SYSHOST=Plan9' 'OBJTYPE=386' $stem
 
 Irix-% irix-%:V:
+	echo ':::: convenience target Irix mips ' $stem 
 	mk 'SYSHOST=Irix' 'OBJTYPE=mips' $stem
 
 Linux-% linux-%:V:
+	echo ':::: convenience target Linux 386 ' $stem 
 	mk 'SYSHOST=Linux' 'OBJTYPE=386' $stem
 
 NetBSD-% netbsd-%:V:
+	echo ':::: convenience target NetBSD 386 ' $stem 
 	mk 'SYSHOST=NetBSD' 'OBJTYPE=386' $stem
 
 Nt-% nt-% Win95-% win95-%:V:
+	echo ':::: convenience target Nt / Win95 386 ' $stem 
 	mk 'SYSHOST=Nt' 'OBJTYPE=386' $stem
 
 Solaris-% solaris-%:V:
+	echo ':::: convenience target Solaris sparc ' $stem 
 	mk 'SYSHOST=Solaris' 'OBJTYPE=sparc' $stem
 
 mkdirs:V:	mkdirs-$SHELLTYPE
 
 mkdirs-rc:V:
+	echo ':::: mkdirs rc ' 
 	mkdir -p `{cat lib/emptydirs}
 	chmod 555 mnt/* n/client/* n/*
 
 mkdirs-sh:V:
+	echo ':::: mkdirs sh ' 
 	mkdir -p `cat lib/emptydirs`
 	chmod 555 mnt/* n/client/* n/*
 
 mkdirs-nt:V:
+	echo ':::: mkdirs nt ' 
 	mkdir -p `{cmd /c type lib\emptydirs}

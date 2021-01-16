@@ -109,6 +109,10 @@ myaccess(char *f)
 }
 
 void
+#ifdef NO_PTR_WRAPPING
+setmalloctag(void*, uintptr)
+#else
 setmalloctag(void*, ulong)
+#endif
 {
 }
