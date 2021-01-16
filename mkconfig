@@ -4,7 +4,8 @@
 #	They are almost always the same.
 
 #	On Nt systems, the ROOT path MUST be of the form `drive:/path'
-ROOT=/usr/inferno
+# ROOT=/usr/inferno
+ROOT=/mnt/term/home/j/local/plan9/custom/inferno-os
 
 #
 #	Specify the flavour of Tk (std for standard builds)

@@ -79,6 +79,8 @@ void		freeb(Block*);
 void		freeblist(Block*);
 void		freeskey(Signerkey*);
 uintptr	getcallerpc(void*);
+ulong	getcallerspc(void*);
+ulong	ptrcheck(uintptr);
 ulong	getFPcontrol(void);
 ulong	getFPstatus(void);
 void		gkbdputc(Queue*, int);

@@ -45,7 +45,7 @@ struct Btail
 #define B2D(bp)		((void*)bp->u.data)
 #define D2B(b, dp)	b = ((Bhdr*)(((uchar*)dp)-(((Bhdr*)0)->u.data))); \
 			if(b->magic != MAGIC_A && b->magic != MAGIC_I)\
-				poolfault(dp, "alloc:D2B", getcallerpc(&dp));
+				poolfault(dp, "alloc:D2B", (ulong)getcallerpc(&dp));
 #define B2NB(b)		((Bhdr*)((uchar*)b + b->size))
 #define B2PT(b)		((Btail*)((uchar*)b - sizeof(Btail)))
 #define B2T(b)		((Btail*)(((uchar*)b)+b->size-sizeof(Btail)))

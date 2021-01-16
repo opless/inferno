@@ -1,4 +1,2 @@
-#
-#	System dependent objects for Inferno model systems
-#
-SYSFILES=lalloc.$O
+TARGFILES=errstr-9front.$O getcallerspc-9front.$O\
+

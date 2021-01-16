@@ -449,7 +449,7 @@ poolalloc(Pool *p, ulong asize)
 
 	if(p->cursize > p->ressize && (prog = currun()) != nil && prog->flags&Prestricted)
 		return nil;
-	return dopoolalloc(p, asize, (WORD)(getcallerpc(&p)));
+	return dopoolalloc(p, asize, ptrcheck(getcallerpc(&p)));
 }
 
 void
@@ -460,7 +460,7 @@ poolfree(Pool *p, void *v)
 
 	D2B(b, v);
 	if(p->monitor)
-		MM(p->pnum|(1<<8), (WORD)(getcallerpc(&p)), (ulong)v, b->size);
+		MM(p->pnum|(1<<8), ptrcheck(getcallerpc(&p)), (ulong)v, b->size);
 
 	lock(&p->l);
 	p->nfree++;
@@ -611,12 +611,12 @@ smalloc(size_t size)
 		if(v != nil)
 			break;
 		if(0)
-			print("smalloc waiting from %lux\n", (WORD)(getcallerpc(&size)));
+			print("smalloc waiting from %lux\n", ptrcheck(getcallerpc(&size)));
 		osenter();
 		osmillisleep(100);
 		osleave();
 	}
-	setmalloctag(v, (WORD)(getcallerpc(&size)));
+	setmalloctag(v, ptrcheck(getcallerpc(&size)));
 	setrealloctag(v, 0);
 	return v;
 }
@@ -626,16 +626,16 @@ kmalloc(size_t size)
 {
 	void *v;
 
-	v = dopoolalloc(mainmem, size+Npadlong*sizeof(ulong), (WORD)(getcallerpc(&size)));
+	v = dopoolalloc(mainmem, size+Npadlong*sizeof(ulong), ptrcheck(getcallerpc(&size)));
 	if(v != nil){
-		ML(v, size, (WORD)(getcallerpc(&size)));
+		ML(v, size, ptrcheck(getcallerpc(&size)));
 		if(Npadlong){
 			v = (ulong*)v+Npadlong;
-			setmalloctag(v, (WORD)(getcallerpc(&size)));
+			setmalloctag(v, ptrcheck(getcallerpc(&size)));
 			setrealloctag(v, 0);
 		}
 		memset(v, 0, size);
-		MM(0, (WORD)(getcallerpc(&size)), (ulong)v, size);
+		MM(0, ptrcheck(getcallerpc(&size)), (ulong)v, size);
 	}
 	return v;
 }
@@ -649,16 +649,16 @@ malloc(size_t size)
 
 	v = poolalloc(mainmem, size+Npadlong*sizeof(ulong));
 	if(v != nil){
-		ML(v, size, (WORD)(getcallerpc(&size)));
+		ML(v, size, ptrcheck(getcallerpc(&size)));
 		if(Npadlong){
 			v = (ulong*)v+Npadlong;
-			setmalloctag(v, (WORD)(getcallerpc(&size)));
+			setmalloctag(v, ptrcheck(getcallerpc(&size)));
 			setrealloctag(v, 0);
 		}
 		memset(v, 0, size);
-		MM(0, (WORD)(getcallerpc(&size)), (ulong)v, size);
+		MM(0, ptrcheck(getcallerpc(&size)), (ulong)v, size);
 	} else 
-		print("malloc failed from %lux\n", (WORD)(getcallerpc(&size)));
+		print("malloc failed from %lux\n", ptrcheck(getcallerpc(&size)));
 	return v;
 }
 
@@ -669,17 +669,17 @@ mallocz(ulong size, int clr)
 
 	v = poolalloc(mainmem, size+Npadlong*sizeof(ulong));
 	if(v != nil){
-		ML(v, size, (WORD)(getcallerpc(&size)));
+		ML(v, size, ptrcheck(getcallerpc(&size)));
 		if(Npadlong){
 			v = (ulong*)v+Npadlong;
-			setmalloctag(v, (WORD)(getcallerpc(&size)));
+			setmalloctag(v, ptrcheck(getcallerpc(&size)));
 			setrealloctag(v, 0);
 		}
 		if(clr)
 			memset(v, 0, size);
-		MM(0, (WORD)(getcallerpc(&size)), (ulong)v, size);
+		MM(0, ptrcheck(getcallerpc(&size)), (ulong)v, size);
 	} else 
-		print("mallocz failed from %lux\n", (WORD)(getcallerpc(&size)));
+		print("mallocz failed from %lux\n", ptrcheck(getcallerpc(&size)));
 	return v;
 }
 
@@ -693,7 +693,7 @@ free(void *v)
 			v = (ulong*)v-Npadlong;
 		D2B(b, v);
 		ML(v, 0, 0);
-		MM(1<<8|0, (WORD)(getcallerpc(&v)), (ulong)((ulong*)v+Npadlong), b->size);
+		MM(1<<8|0, ptrcheck(getcallerpc(&v)), (ulong)((ulong*)v+Npadlong), b->size);
 		poolfree(mainmem, v);
 	}
 }
@@ -711,14 +711,14 @@ realloc(void *v, size_t size)
 		size += Npadlong*sizeof(ulong);
 	nv = poolrealloc(mainmem, v, size);
 	ML(v, 0, 0);
-	ML(nv, size, (WORD)(getcallerpc(&v)));
+	ML(nv, size, ptrcheck(getcallerpc(&v)));
 	if(nv != nil) {
 		nv = (ulong*)nv+Npadlong;
-		setrealloctag(nv, (WORD)(getcallerpc(&v)));
+		setrealloctag(nv, ptrcheck(getcallerpc(&v)));
 		if(v == nil)
-			setmalloctag(v, (WORD)(getcallerpc(&v)));
+			setmalloctag(v, ptrcheck(getcallerpc(&v)));
 	} else 
-		print("realloc failed from %lux\n", (WORD)(getcallerpc(&v)));
+		print("realloc failed from %lux\n", ptrcheck(getcallerpc(&v)));
 	return nv;
 }
 
@@ -878,7 +878,7 @@ static void
 _poolfault(void *v, char *msg, ulong c)
 {
 	auditmemloc(msg, v);
-	panic("%s %lux (from %lux/%lux)", msg, v, (WORD)(getcallerpc(&v)), c);
+	panic("%s %lux (from %lux/%lux)", msg, v, ptrcheck(getcallerpc(&v)), c);
 }
 
 static void
