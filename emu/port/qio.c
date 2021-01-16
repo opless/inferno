@@ -116,7 +116,7 @@ padblock(Block *bp, int size)
 		}
 
 		if(bp->next)
-			panic("padblock 0x%luX", getcallerpc(&bp));
+			panic("padblock 0x%luX", (ulong)(getcallerpc(&bp)));
 		n = BLEN(bp);
 		padblockoverhead += n;
 		nbp = allocb(size+n);
@@ -130,7 +130,7 @@ padblock(Block *bp, int size)
 		size = -size;
 
 		if(bp->next)
-			panic("padblock 0x%luX", getcallerpc(&bp));
+			panic("padblock 0x%luX", (ulong)(getcallerpc(&bp)));
 
 		if(bp->lim - bp->wp >= size)
 			return bp;
@@ -1301,7 +1301,7 @@ qwrite(Queue *q, void *vp, int len)
 			n = Maxatomic;
 
 		b = allocb(n);
-		setmalloctag(b, getcallerpc(&q));
+		setmalloctag(b, (ulong)(getcallerpc(&q)));
 		if(waserror()){
 			freeb(b);
 			nexterror();
